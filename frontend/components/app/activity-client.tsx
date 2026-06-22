@@ -15,13 +15,18 @@ export function ActivityClient({ initialAuditLogs }: { initialAuditLogs: AuditLo
   const [logs, setLogs] = useState(initialAuditLogs);
   const [loading, setLoading] = useState(false);
   const [approving, setApproving] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function refresh() {
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/audit");
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Audit refresh failed");
       setLogs(data.auditLogs ?? []);
+    } catch (refreshError) {
+      setError(refreshError instanceof Error ? refreshError.message : "Audit refresh failed.");
     } finally {
       setLoading(false);
     }
@@ -34,6 +39,7 @@ export function ActivityClient({ initialAuditLogs }: { initialAuditLogs: AuditLo
 
   async function approve(log: AuditLog) {
     setApproving(log.id);
+    setError(null);
     try {
       const response = await fetch("/api/actions/approve", {
         method: "POST",
@@ -43,6 +49,8 @@ export function ActivityClient({ initialAuditLogs }: { initialAuditLogs: AuditLo
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Approval failed");
       setLogs((current) => [data.auditLog, data.approvedAction, ...current.filter((item) => item.id !== log.id)]);
+    } catch (approvalError) {
+      setError(approvalError instanceof Error ? approvalError.message : "Approval failed.");
     } finally {
       setApproving(null);
     }
@@ -64,6 +72,12 @@ export function ActivityClient({ initialAuditLogs }: { initialAuditLogs: AuditLo
           Refresh
         </Button>
       </section>
+
+      {error && (
+        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
 
       <section className="rounded-xl border border-border bg-card">
         {logs.length === 0 ? (
