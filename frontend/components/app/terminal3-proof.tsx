@@ -18,11 +18,11 @@ export function Terminal3ProofStrip({ proof, compact = false }: { proof: Termina
       </div>
       <div>
         <span className="text-muted-foreground/60">agent </span>
-        <span className="text-foreground">{proof.agentDid}</span>
+        <span className="break-all text-foreground">{proof.agentDid}</span>
       </div>
       <div>
         <span className="text-muted-foreground/60">function </span>
-        <span className="text-foreground">{proof.functionName}</span>
+        <span className="break-all text-foreground">{proof.functionName}</span>
       </div>
       <div>
         <span className="text-muted-foreground/60">digest </span>
