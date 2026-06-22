@@ -9,7 +9,11 @@ const nextConfig = {
     root: appRoot,
   },
   outputFileTracingIncludes: {
-    "/*": ["./node_modules/@terminal3/t3n-sdk/**"],
+    "/*": [
+      "./node_modules/@terminal3/t3n-sdk/**",
+      "./node_modules/@bytecodealliance/preview2-shim/**",
+      "./node_modules/.pnpm/@bytecodealliance+preview2-shim*/**",
+    ],
   },
   images: {
     unoptimized: true,
