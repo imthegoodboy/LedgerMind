@@ -25,9 +25,11 @@ export function ReportsClient() {
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<ReportResult | null>(null);
   const [auditLog, setAuditLog] = useState<AuditLog | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function generateReport() {
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/reports", {
         method: "POST",
@@ -38,6 +40,8 @@ export function ReportsClient() {
       if (!response.ok) throw new Error(data.error ?? "Report failed");
       setReport(data.report);
       setAuditLog(data.auditLog);
+    } catch (reportError) {
+      setError(reportError instanceof Error ? reportError.message : "Report generation failed.");
     } finally {
       setLoading(false);
     }
@@ -90,6 +94,12 @@ export function ReportsClient() {
           Generate
         </Button>
       </section>
+
+      {error && (
+        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
 
       <section className="grid gap-4 md:grid-cols-3">
         {reportTemplates.map((template) => (
