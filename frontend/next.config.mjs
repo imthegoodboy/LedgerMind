@@ -9,7 +9,7 @@ const nextConfig = {
     root: appRoot,
   },
   outputFileTracingIncludes: {
-    "/*": ["./node_modules/@terminal3/t3n-sdk/dist/wasm/generated/session.core.wasm"],
+    "/*": ["./node_modules/@terminal3/t3n-sdk/**"],
   },
   images: {
     unoptimized: true,
