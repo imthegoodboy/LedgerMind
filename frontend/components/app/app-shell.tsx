@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <div className="fixed inset-0 grid-pattern opacity-40" />
       <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/92 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
