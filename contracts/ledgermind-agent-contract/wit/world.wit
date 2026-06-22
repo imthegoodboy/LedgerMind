@@ -1,0 +1,8 @@
+package ledgermind:agent;
+
+world ledgermind-agent {
+  export scan-receipt: func(input: string) -> string;
+  export classify-expense: func(input: string) -> string;
+  export generate-report: func(input: string) -> string;
+  export execute-approved-payment: func(input: string) -> string;
+}
