@@ -3,6 +3,7 @@ import "server-only";
 import crypto from "node:crypto";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import type { ProtectedActionInput, Terminal3Proof, Terminal3SessionSnapshot } from "@/lib/ledger-types";
 import { agentById } from "@/lib/ledger-data";
 
@@ -48,10 +49,22 @@ function importTerminal3Sdk() {
     const runtimeImport = new Function("specifier", "return import(specifier)") as (
       specifier: string,
     ) => Promise<Terminal3Sdk>;
-    globalForTerminal3.__ledgerMindT3Sdk = runtimeImport("@terminal3/t3n-sdk");
+    globalForTerminal3.__ledgerMindT3Sdk = runtimeImport(terminal3SdkEntrypoint());
   }
 
   return globalForTerminal3.__ledgerMindT3Sdk;
+}
+
+function terminal3SdkEntrypoint() {
+  const candidates = [
+    path.join(process.cwd(), "node_modules", "@terminal3", "t3n-sdk", "dist", "index.esm.js"),
+    path.join(process.cwd(), "node_modules", "@terminal3", "t3n-sdk", "dist", "index.js"),
+    path.join(process.cwd(), "frontend", "node_modules", "@terminal3", "t3n-sdk", "dist", "index.esm.js"),
+    path.join(process.cwd(), "frontend", "node_modules", "@terminal3", "t3n-sdk", "dist", "index.js"),
+  ];
+
+  const entrypoint = candidates.find((candidate) => existsSync(candidate)) ?? candidates[0];
+  return pathToFileURL(entrypoint).href;
 }
 
 function environment() {
