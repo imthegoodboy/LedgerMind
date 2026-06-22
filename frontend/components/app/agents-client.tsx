@@ -12,13 +12,18 @@ export function AgentsClient({ initialTerminal3 }: { initialTerminal3: Terminal3
   const [terminal3, setTerminal3] = useState(initialTerminal3);
   const [auditLog, setAuditLog] = useState<AuditLog | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function refreshSession() {
     setLoading("session");
+    setError(null);
     try {
       const response = await fetch("/api/terminal3/session?refresh=1");
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "SDK refresh failed");
       setTerminal3(data.terminal3);
+    } catch (sessionError) {
+      setError(sessionError instanceof Error ? sessionError.message : "SDK refresh failed.");
     } finally {
       setLoading(null);
     }
@@ -27,6 +32,7 @@ export function AgentsClient({ initialTerminal3 }: { initialTerminal3: Terminal3
   async function trigger(agentId: AgentId) {
     const agent = ledgerAgents.find((item) => item.id === agentId)!;
     setLoading(agentId);
+    setError(null);
     try {
       const response = await fetch("/api/actions/protected", {
         method: "POST",
@@ -42,6 +48,8 @@ export function AgentsClient({ initialTerminal3 }: { initialTerminal3: Terminal3
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Action failed");
       setAuditLog(data.auditLog);
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : "Protected action failed.");
     } finally {
       setLoading(null);
     }
@@ -50,6 +58,7 @@ export function AgentsClient({ initialTerminal3 }: { initialTerminal3: Terminal3
   async function approvePending() {
     if (!auditLog) return;
     setLoading("approval");
+    setError(null);
     try {
       const response = await fetch("/api/actions/approve", {
         method: "POST",
@@ -59,6 +68,8 @@ export function AgentsClient({ initialTerminal3 }: { initialTerminal3: Terminal3
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Approval failed");
       setAuditLog(data.auditLog);
+    } catch (approvalError) {
+      setError(approvalError instanceof Error ? approvalError.message : "Approval failed.");
     } finally {
       setLoading(null);
     }
@@ -80,6 +91,12 @@ export function AgentsClient({ initialTerminal3 }: { initialTerminal3: Terminal3
           Refresh SDK
         </Button>
       </section>
+
+      {error && (
+        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
 
       <section className="grid gap-5 lg:grid-cols-[0.7fr_0.3fr]">
         <div className="grid gap-4 md:grid-cols-2">
