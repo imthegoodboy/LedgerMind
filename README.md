@@ -2,6 +2,8 @@
 
 LedgerMind AI is a verifiable finance-operations workspace for receipt capture, expense analytics, AI chat, report generation, audit review, and approval-controlled payment intents. It is built for the Terminal3 ADK challenge and treats every sensitive agent action as a signed, auditable event.
 
+Live app: https://ledgermind-ai-eight.vercel.app
+
 ## Product
 
 LedgerMind has four scoped finance agents:
